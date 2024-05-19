@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="common/base::pagetitle"></title>
+    <link th:replace="common/base::static"/>
+</head>
+<body>
+<div class="layui-form" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">网址名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" th:value="${editInfo.name}" lay-verify="required" placeholder="请输入网址名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="code" th:value="${editInfo.code}" lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="value" th:value="${editInfo.value}" placeholder="请输入密码" autocomplete="off" class="layui-input" id="passwordInput">
+        </div>
+        <button type="button" class="layui-btn layui-btn-primary" id="randomButton">随机</button>
+    </div>
+
+    <script>
+        document.getElementById('randomButton').addEventListener('click', function() {
+            var randomString = generateRandomString(32); // 生成32位随机字符串
+            document.getElementById('passwordInput').value = randomString;
+        });
+
+        function generateRandomString(length) {
+            var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"; // 增加特殊字符
+            var randomString = "";
+            var cryptoObj = window.crypto || window.msCrypto; // 获取密码安全的随机数生成对象
+            var randomValues = new Uint32Array(length);
+            cryptoObj.getRandomValues(randomValues); // 生成密码安全的随机数
+
+            for (var i = 0; i < length; i++) {
+                randomString += charset.charAt(randomValues[i] % charset.length);
+            }
+            return randomString;
+        }
+    </script>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="有效" autocomplete="off" class="layui-input" th:checked="${editInfo.status==0}">
+            <input type="radio" name="status" value="1" title="无效" autocomplete="off" class="layui-input" th:checked="${editInfo.status==1}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序值</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sort" th:value="${editInfo.sort}" lay-verify="required" placeholder="请输入排序值" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <input type="text" name="remark" th:value="${editInfo.remark}" placeholder="请输入备注" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit="" lay-filter="kFormSubmit" id="kFormSubmit">
+        <input type="text" name="id" th:value="${editInfo.id}" autocomplete="off" class="layui-input">
+    </div>
+</div>
+
+<script th:replace="common/base::context"></script>
+<script th:replace="common/base::mainjs"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var $ = layui.$, form = layui.form, laydate = layui.laydate;
+
+        //监听提交
+        form.on('submit(kFormSubmit)', function(data){
+            var field = data.field; //获取提交的字段
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+            var url = field.id ? 'sys/dict/edit' : 'sys/dict/add';
+            //提交 Ajax 成功后，关闭当前弹层并重载表格
+            $.ajax({
+                type: req.type.post,
+                url: BASE_WEB + url,
+                data: field,
+                async: false,
+                success: function (r) {
+                    if (r.code === req.status.ok) {
+                        // 重载表格
+                        parent.layui.table.reload('kContentTable');
+                        parent.layer.close(index); //再执行关闭
+                    } else {
+                        kvfKit.errorMsg(r.msg);
+                    }
+                }
+            });
+
+        });
+    })
+</script>
+</body>
+</html>
