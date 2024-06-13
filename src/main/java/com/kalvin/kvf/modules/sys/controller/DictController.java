@@ -63,8 +63,8 @@ public class DictController extends BaseController {
 
     @RequiresPermissions("sys:dict:add")
     @PostMapping(value = "add")
-    public R add(Dict dict) {
-        String key = AES.MD5((long) dict.getName().hashCode() + dict.getCode().hashCode() + dict.getSort());
+    public R add(Dict dict) throws Exception {
+        String key = AES.SHA256(AES.getMacList().toString()+dict.getName() + dict.getCode() + dict.getSort());
         dict.setValue(AES.encryption(key, dict.getValue()));
         dictService.save(dict);
         return R.ok();
@@ -72,19 +72,19 @@ public class DictController extends BaseController {
 
     @RequiresPermissions("sys:dict:edit")
     @PostMapping(value = "edit")
-    public R edit(Dict dict) {
-        // 密码改了
+    public R edit(Dict dict) throws Exception {
+        // 密码已修改
         if (!dict.getValue().equals(dictService.getById(dict.getId()).getValue())) {
-            String key = AES.MD5((long) dict.getName().hashCode() + dict.getCode().hashCode() + dict.getSort());
+            String key = AES.SHA256(AES.getMacList().toString()+dict.getName() + dict.getCode() + dict.getSort());
             dict.setValue(AES.encryption(key, dict.getValue()));
             dictService.updateById(dict);
             return R.ok();
         } else {
-            // 密码没改，修改其他信息
+            // 密码未改，修改其他信息
             Dict old = dictService.getById(dict.getId());
-            String decryption = AES.decryption(AES.MD5((long)
-                    old.getName().hashCode() + old.getCode().hashCode() + old.getSort()), old.getValue());
-            String key = AES.MD5((long) dict.getName().hashCode() + dict.getCode().hashCode() + dict.getSort());
+            String decryption = AES.decryption(AES.SHA256(AES.getMacList().toString()+old.getName()
+                    + old.getCode() + old.getSort()), old.getValue());
+            String key = AES.SHA256(AES.getMacList().toString()+dict.getName() + dict.getCode() + dict.getSort());
             dict.setValue(AES.encryption(key, decryption));
             dictService.updateById(dict);
             return R.ok();
@@ -93,15 +93,15 @@ public class DictController extends BaseController {
 
     @RequiresPermissions("sys:dict:del")
     @PostMapping(value = "del/{id}")
-    public R del(@PathVariable Long id) {
+    public R del(@PathVariable Long id) throws Exception {
         if (id < 0) {
             id *= -1;
             dictService.removeById(id);
             return R.ok();
         } else {
             Dict dict = dictService.getById(id);
-            String decryption = AES.decryption(AES.MD5((long)
-                    dict.getName().hashCode() + dict.getCode().hashCode() + dict.getSort()), dict.getValue());
+            String decryption = AES.decryption(AES.SHA256(AES.getMacList().toString()+
+                    dict.getName() + dict.getCode() + dict.getSort()), dict.getValue());
             return R.ok(decryption);
         }
     }
