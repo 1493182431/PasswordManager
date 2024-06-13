@@ -84,13 +84,11 @@ LOCK TABLES `sys_dict` WRITE;
 /*!40000 ALTER TABLE `sys_dict`
     DISABLE KEYS */;
 INSERT INTO `sys_dict`
-VALUES (8, '爱奇艺', '15466852323', '958784ac03a513f9a13e869910394e78', 0, 1, '爱奇艺'),
-       (9, 'bilibili', '2762259874', '8a56aef8cdbeae8d67f2a047b38f58a1', 0, 2, 'b站'),
-       (12, '海南大学教务系统', '264945894616', '3c1f08df430b092291488ba09fe72773', 0, 3, ''),
-       (13, 'Microsoft', '2354241345', '8e8429379fc3f00c621c9a8e40e4025e', 0, 4, '微软'),
-       (14, '微信', '79897874', 'f45277508b775ad6fc1760ba2753c5c4', 0, 5, ''),
-       (19, 'QQ', '2767705267', '31f7de8fc9e457989225f2c3bda9b35e', 0, 6, ''),
-       (20, 'test', 'test', 'bcea977365a6db238d3ee7ee777b3d280bc8d71ee8cce498acca2c5ae57360d8', 0, 7, '');
+VALUES (23, '海带教务', '20213007250', '3c41bbea415e77519ab4d2c7f30758cc', 0, 1, '教务系统'),
+       (24, 'QQ', '1493182431', '7036a1f28365257ba96326421ac95eec', 0, 2, 'QQ'),
+       (25, 'bilibili', '18876783540', 'f165722310e5babb3dbecb0ebfdc505f', 0, 3, 'B站'),
+       (26, '爱奇艺', '2767705267', '7108fe61970ffc21c8909810ed8973a58d837338a553e1a4c2673273b625d4e88d1906bc44afa474c7f198b9ebb59254', 0, 4, '爱奇艺'),
+       (27, '微信', '17771649252', '144039ba754bf3249be1a0f5d498345f', 0, 5, '');
 /*!40000 ALTER TABLE `sys_dict`
     ENABLE KEYS */;
 UNLOCK TABLES;
